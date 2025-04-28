@@ -1,0 +1,218 @@
+---
+title: "Homework 4"
+author: "202001156-김수영"
+date: "Due date: 2023-05-26 23:59"
+output: 
+   html_document:
+      df_paged: TRUE
+editor_options:
+  chunk_output_type: console
+---
+
+
+1. 자료실에 업로드된 `exercise.zip` 파일을 다운로드 후 `exercise` 폴더에 압축을 
+풀면 총 20개의 텍스트 파일이 저장되어 있다. 해당 파일들은 
+휴면상태 뇌파(resting state EEG) 신호로부터 추출한 특징(feature)이다. 
+폴더에 포함된 텍스트 파일의 이름은 `기기명` (`h7n1`), 
+`EEG 변수 특징` (`beam_results`), `파일번호` (예: `009`)로 
+구성되어 있고 `_`로 연결되어 있으며, 변수를 구분하기 위한 구분자(seperator)로 탭 문자(`\t`)를 
+사용하고 있다.
+
+
+a. 저장한 텍스트 파일 중 하나를 열어보고 해당 텍스트 파일이 저장하고 있는 
+데이터의 구조에 대해 설명하시오. 
+
+16개의 열과 변수명을 나타내는 행을 제외한 3개의 행을 갖고 있는 형태이다. 주목할만한 부분은 Row변수에 있는 Total, Left, Right 데이터인데, 주어진 데이터가 뇌파와 관련된 것들이기에 각각 전체 뇌, 좌뇌, 우뇌를 의미하고 있다고 볼 수 있다. 즉, id에 따른 각각의 텍스트 파일들은 전체 뇌, 좌뇌, 우뇌의 여러 뇌파신호를 가지고 있는 파일이다.
+
+
+
+b. 다운로드한 텍스트 파일이 저장된 폴더 경로를 `path` 라는 객체에 저장하고,  
+`dir()` 함수를 이용해 해당 폴더에 저장되어 있는 파일의 이름 모두를 `filename` 
+이라는 객체에 저장 후 R 콘솔에서 확인하시오. 
+
+
+```{r, echo=TRUE}
+# 스크립트 작성
+getwd() # 현재 작업공간 확인
+path <- "exercise" # path라는객체에 텍스트파일이 저장된 폴더의 상대 경로 저장
+filename <- dir(path) # filename이라는 객체에 파일 이름 저장
+head(path) ; head(filename) # path와 filename객체 확인
+```
+
+
+c. `filename` 에서 `기기명` 부분만 추출 후, `file_dev` 객체에 저장 하시오. 
+
+
+```{r, echo=TRUE}
+idx <- regexpr("h7n1", filename) # h1n7이 나타나는 위치 인덱스를 idx 객체에 저장
+file_dev <- substr(filename, idx, idx + attr(idx, 'match.length') -1) # h7n1 부분을 추출하여 file_dev에 할당
+head(file_dev) # file_dev객체 확인
+```
+
+
+
+d. 정규표현식을 응용하여 `filename` 에서 기기 명칭에 해당하는 문자열을 삭제 후 
+`file_id` 객체에 저장 하시오(hint: `gsub()` 함수를 사용하고, 
+`file_id`에 저장되어 있는 문자열은 `beam_results_009.txt`와 같은 형태로 
+반환되어야 함). 
+
+
+```{r, echo=TRUE}
+file_id <- gsub(paste0(file_dev,'_'), x = filename,"") # filename에서 기기 명칭에 해당하는 부분을 삭제시켜 file_id 객체에 할당
+head(file_id) # fil_id객체 확인
+```
+
+
+e. 정규표현식을 활용해 위에서 생성한 `file_id`에서 숫자 부분만 추출 후 
+`id_tmp` 라는 객체에 저장 후, "ID" 문자값과 `id_tmp`에 저장되어 있는 각 원소를 결합해 
+모든 원소가 `ID009`와 같은 형태의 문자값을 갖는 `ID` 객체를 생성하시오. 
+
+
+```{r, echo=TRUE}
+idx <- regexpr("[0-9]{3}", file_id) # file_id에서 id부분에 해당하는 숫자의 위치 인덱스를 idx 객체에 엊장
+id_tmp <- substr(file_id, idx, idx + attr(idx, 'match.length') - 1) # file_id의 id 부분을 추출하여 id_tmp에 저장
+ID <- paste0("ID",id_tmp) # 조건에 맞는 ID 객체 생성
+head(id_tmp) ; head(ID) # id_temp, ID객체 확인
+```
+
+
+f. `paste()` 또는 `paste0()` 함수를 활용해 1-a. 에서 생성한 `path`라는 객체와 
+`filename`을 이용해 `파일경로/파일명` 형태의 문자형 벡터를 `full_filename` 
+객체에 저장하시오. 
+
+
+```{r, echo=TRUE}
+full_filename <- paste(path, filename, sep = "/") # path 객체와 filename 객체를 /로 구분하여 파일경로/파일명 형태의 문자형 벡터를 full_filename이라는 객체에 할당
+head(full_filename) # full_filename객체 확인
+```
+
+
+g. 1-f.에서 만든 `full_filename`, `lapply()`와 `read.table()` 함수를 활용하여 
+폴더에 저장되어 있는 모든 텍스트 파일을 리스트 형태로 저장해 `datl` 객체에 할당하시오. 
+
+
+```{r, echo=TRUE}
+datl <- lapply(full_filename,  function(x) read.table(x, header = T, sep = "\t")) # lapply함수를 통해 폴더 내 모든 텍스트파일을 읽은 후 datl이라는 객체에 리스트 형태로 할당
+head(datl) # datl객체 확인
+```
+
+
+h. 1-g.에서 생성한 `datl`에 저장되어 있는 20개의 데이터 프레임을 하나의 
+데이터 프레임으로 묶은 결과를 저장한 `dat` 객체를 생성 하시오. 
+
+```{r, echo=TRUE}
+dat <- do.call(what = rbind, args = datl) # datl에 저장된 각 데이터 프레임들을 행 기준으로 결합하여 dat라는 객체에 데이터 프레임 형태로 할당
+head(dat) # dat객체 확인
+```
+
+
+i. 1-c. 와 1-d. 에서 생성한 `ID`와 `file_dev` 두 변수로 구성된  `id_info` 라는 
+데이터 프레임을 생성 하시오. 단 두 문자형 벡터의 각 원소는 3 번씩 반복하고,  
+두 변수 `ID`와 `file_dev`는 모두 문자형으로 저장되어야 함. 
+
+```{r, echo=TRUE}
+id_info <- data.frame(ID = rep(ID, each = 3), file_dev = rep(file_dev, 3)) #  ID와 file_dev라는 변수를 갖는 id_info라는 데이터 프레임 생성, dat라는 데이터 프레임이 ID에 따른 전체 뇌, 좌뇌, 우뇌 순으로 뇌파정보가 나열되어 있으므로, ID를 반복시킬 때 each 옵션을 적용시켜서 뇌의 부분에 따른 동일한 ID가 할당되도록 조정
+head(id_info) # id_info객체 확인
+```
+
+
+j. 1-i. 에서 생성한 데이터 프레임 `id_info` 와 1.h 에서 생성한 `dat` 을 하나의 
+데이터 프레임으로 묶은 `dat_fin` 이라는 객체를 생성 하시오. 
+
+
+```{r, echo=TRUE}
+dat_fin <- cbind(id_info, dat) # id_info와 dat 데이터 프레임을 열 기준으로 합쳐 dat_fin이라는 객체에 할당
+head(dat_fin, 10) # dat_fin객체 확인
+```
+
+
+
+k. 자료실에 업로드된 `beam-crf-ex.xlsx`를 다운로드 한 후 
+R 작업공간에 읽어온 결과를 `beam_crf` 객체에 저장하시오 (hint: readxl 패키지 설치 후 `read_xlsx()` 함수 사용). 
+
+```{r, echo=TRUE}
+beam_crf <- readxl::read_xlsx('beam-crf-ex.xlsx') # beam_crf라는 객체에 주어진 파일을 읽어 저장
+head(beam_crf) # beam_crf객체 확인
+```
+
+
+l. `beam_crf` 데이터 프레임 내에 존재하는 변수 `eeg_filenam`의 문자열 중 처음 
+5개 문자(예: `ID158`)만 추출한 `eeg_id`라는 변수를 `beam_crf` 데이터 프레임 
+내에 새로운 변수로 만드시오. 
+
+```{r, echo=TRUE}
+idx <- regexpr("ID[0-9]{3}", beam_crf$eeg_filenam) # ID숫자 꼴의 패턴이 나타나는 위치 인덱스를 idx에 할당
+beam_crf <- within(beam_crf, {
+  eeg_id <- substr(eeg_filenam, idx,
+                   idx + attr(idx, 'match.length') - 1) # beam_crf의 eeh_filenam 변수의 id를 추출하여 eeg_id라는 변수에 idx를 통하여 할당
+  })
+head(beam_crf) # 업데이트 된 beam_crf객체 확인
+```
+
+
+
+m. 두 데이터 프레임 `beam_crf`와 `dat_fin`은 연결할 수 있는가? 
+연결할 수 있다면 그 이유를 설명 하시오. 
+
+연결 가능하다. beam_crf 데이터 프레임과 dat_fin 데이터 프레임을 만들면서 각각 ID정보를 지닌 변수를 만들었고 이 변수들은 모두 같은 정규방정식을 통해 생성된 값으로 'ID000' 꼴의 형태로 되어 있으므로 ID의 값을 기준으로 병합할 수 있다.
+
+
+
+n. 만약 연결할 수 있다면 `beam_crf`와 `dat_fin`을 병합해 두 데이터 프레임에 
+공통으로 포함된 행으로만 구성된 데이터 프레임 `beam_sub` 객체를 생성 하시오. 
+
+```{r, echo=TRUE}
+beam_sub <- merge(dat_fin, beam_crf,  by.x = "ID", by.y = "eeg_id") # 공통값을 가지는 각각의 ID 변수인 'ID', 'eeg_id'를 기준으로 병합하여 beam_sub라는 객체 생성
+head(beam_sub) # beam_sub객체 확인
+```
+
+
+o. 1.n. 에서 생성한 `beam_sub`에 대해 아래 기술한 내용을 수행 하시오. 
+
+   1. `usubjid`, `sex`, `age`, `literacy`, `Row`, `MDF`, `PF`, `ATR` 변수 추출
+   2. 변수 `sex`, `literacy`, `Row`를 요인형(factor)으로 변환하고, 
+   3. 변수 `age`를 `floor()` 함수를 이용해 소숫점을 내림한 결과가 저장된 `beam_sub2` 객체를 생성 하시오. 
+
+```{r, echo=TRUE}
+beam_sub2 <- beam_sub[,c('usubjid', 'sex', 'age', 'literacy', 'Row', 'MDF', 'PF', 'ATR')] # beam_sub의 `usubjid`, `sex`, `age`, `literacy`, `Row`, `MDF`, `PF`, `ATR` 변수를 추출하여 beam_sub2에 할당
+beam_sub2[,c('sex', 'literacy', 'Row')] <- lapply(beam_sub2[,c('sex', 'literacy', 'Row')],factor) # beam_sub2의 변수 `sex`, `literacy`, `Row`를 요인형(factor)으로 변환하여 beam_sub2 업데이트
+beam_sub2$age <- floor(beam_sub2$age) # beam_sub2의 변수 중 'age'를 내림시켜 beam_sub2를 업데이트
+head(beam_sub2) # beam_sub2객체 확인
+```
+
+
+p. `beam_sub2`를 이용해 아래 기술한 결과를 반환하는 스크립트를 작성 후 확인 하시오. 
+
+
+   1. `Row` 수준별 `MDF`, `PF`, `ATR`의 평균(`mean()`), 표준편차(`sd()`), 최솟값(`min()`), 중앙값(`median()`), 최댓값(`max()`)을 출력 하시오. 
+   
+   2.`literacy`는 조사에 참여한 대상자의 문식력(문자를 읽고 쓸수 있는지)에 대한 정보를 담고 있는 변수이다. 문식력 변수의 수준 별 케이스 수와 `age`, `MDF`, `PF`, `ATR`의 평균 결과를 출력 하시오. 
+
+
+
+```{r, echo=TRUE}
+stat <-  function(data = x) {
+  x.min <- min(data) ; x.max <- max(data) ; x.mean <- mean(data) ; x.median <- median(data) ; x.sd <- sd(data)
+  total <- data.frame(min = x.min, max = x.max, mean = x.mean, median = x.median, sd = x.sd)
+  return(total)
+}
+setNames(lapply(levels(beam_sub2$Row),function(i) sapply(split(beam_sub2, beam_sub2$Row)[[i]][c("MDF","PF","ATR")], stat)), levels(beam_sub2$Row)) # aggregate함수는 사용자지정 함수는 입력을 받지 못하므로 표준편차를 출력하지 않고, 1,3분위수를 출력하는 summary함수를 이용하면 문제에서 원하는 결과값을 얻을 수 없다. 따라서 split함수로 Row별 데이터프레임을 리스트의 형태로 만들고 sapply로 평균, 표준편차, 최솟값, 중앙값, 최댓값을 출력하는 사용자 지정 함수를 적용킨 후 lapply 함수로 Row의 수준 별 사용자 지정 함수를 적용시키게 다시 적용시킨 후 리스트의 이름을 재설정하여 원하는 값을 출력하게 한다.
+
+summary(beam_sub2$literacy)/3 # literacy의 수준 별 케이스 수, /3을 한 이유는 한 사람의 문식력 수준이 Row수준에 따라 반복되므로 literacy의 수준 별 케이스 수를 정확히 알기 위해서는 Row수준 Total, Left, Right로 반복되는 3가지에 따른 문식력의 수준별 수를 Row의 수준 별 케이스인 3으로 나눠야 정확한 literacy의 케이스 수를 구하는 것이라 판단하였기에 3으로 나누었다.
+aggregate(beam_sub2[,c('age', 'MDF', 'PF', 'ATR')], beam_sub2['literacy'], mean) # 문식력의 수준별 `age`, `MDF`, `PF`, `ATR`의 평균 출력
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+

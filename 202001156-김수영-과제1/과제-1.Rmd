@@ -1,0 +1,44 @@
+---
+title: "통계프로그래밍 1주차 과제"
+author: "김수영"
+date: "2023-03-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 자기소개서
+
+안녕하세요 충남대학교 정보통계학과 2학년 소속인 202001156 김수영이라고 합니다. 학번에서 알 수 있으시듯이 저는 2020학년도에 충남대학교에 입학을 했습니다. 1학년을 마치고 입대를 한 후 전역하여 이렇게 2023년에 복학을 맞춰 현재 교수님의 강의를 수강하게 되었습니다. 교수님께서도 아시다시피 한창 코로나19가 창궐하던 시기였기에 1학년은 모든 강의를 비대면으로 수강하여서 대면으로 진행하는 학기는 이번 학기가 처음입니다. 1학년때 저는 R을 배우긴 하였으나 입대해 있는 동안 많은 부분을 까먹었기에 이번 강의를 통해 제가 배웠던 R 코딩능력과 개념들을 다시 일깨우고 더 심화된 코딩능력을 기르고 싶습니다. 앞으로 잘 부탁드리겠습니다. 감사합니다!
+
+##  Rstudio 작업환경
+
+![](..\input\working environment.png)
+
+##  현재 R 작업폴더 및 폴더 내 파일
+
+```{r}
+getwd() ; dir()
+```
+
+## 작업폴더의 차상위 폴더
+
+```{r}
+setwd("../..") ; getwd()
+```
+
+## cars data set의 2차원 산점도
+
+```{r}
+
+library(ggplot2)
+
+c <- ggplot(data = cars) + theme_get()
+c <- c + geom_point(aes(x = speed, y = dist))
+c <- c + scale_x_continuous(breaks = 1:10*2.5, labels = paste0(1:10*2.5 ,"mph")) + scale_y_continuous(breaks = 1:12*10, labels = paste0(1:12*10 ,"fit"))
+c
+
+```
+

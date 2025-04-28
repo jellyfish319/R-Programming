@@ -1,0 +1,168 @@
+---
+title: "통계프로그래밍언어 4번째 과제"
+author: "202001156 정보통계학과 김수영"
+date: "2023-06-09"
+output: html_document
+---
+
+1.
+```{r}
+D1 <- data.frame(F1 = c('A','B', 'C', 'D'), F2 = seq(1000, 4000, 1000), F3 = seq(25.5, 55.5, 10), F4 = c(10,34,78,3))
+D2 <- data.frame(F1 = LETTERS[5:8], F2 = seq(5000,8000,1000), F3 = seq(65.5,95.5,10)) # D1, D2 데이터셋 생성
+idx <- colnames(D2) # 열의 개수가 다르므로 D2의 열을 idx로 지정
+rbind(D1[idx], D2) # D1에 idx를 통해 D2와 열을 같게 맞춘 다음 D2와 행결합
+```
+2.
+```{r}
+# (a)
+x <- rnorm(300,10,16) # 조건에 맞는 객체 x 생성
+
+# (b)
+e <- rnorm(300,0,2) # 조건에 맞는 객체 e 생성
+
+# (c)
+y <- 8 + 5*x + e # 조건에 맞는 객체 y 생성
+
+# (d)
+plot(x,y) # x 와 y 의 산점도 그리기
+
+# (e)
+X <- matrix(cbind(1,x),ncol = 2) # design matrix 생성
+
+# (f)
+bhat <- solve(t(X)%*%X)%*%t(X)%*%y # 조건에 맞는 객체 bhat 생성
+
+# (g) 첫 번째 행의 값은 intercept, 회귀식의 절편을 의미하고, 두 번째 행의 값은 slope, 첫 번째 설명변수의 기울기를 의미
+
+# (h)
+abline(a = bhat[1], b = bhat[2], col = 'red') # 산점도에 빨간색 회귀직선 추가
+
+# (i)
+yhat <- as.vector(X%*%bhat) # 조건에 맞는 yhat을 vector형태로 생성
+
+# (j) yhat은 구한 회귀직선으로부터 구한 y의 추정값이다. 즉, X의 값을 회귀직선에 대입한 값이다.
+
+# (k)
+r <-- y - yhat # residual 계산
+SST <- sum((y - mean(y))^2) # 총 제곱합 계산
+SSE <- sum((y - yhat)^2) # 잔차 제곱합 계산
+Rsqr <- 1 - SSE/SST # 결정계수 계산
+print(r) ; print(Rsqr) # 잔차와 결정계수 출력
+```
+
+3.
+```{r}
+x <- seq(-4,4,0.001) # -4부터 4까 0.001의 간격을 갖는 x값 벡터를 생성
+y <- dnorm(x) # x에 따른 표준정규분포의 pdf값을 y에 할당
+plot(x, y, type = 'l', xlab = 'x', ylab = '밀도', main = '표준정규분포 밀도함수') # x 와 y를 그래프로 그린 후 x축과 y축, 그래프에 각각 제목 부여
+```
+
+4.
+```{r}
+pdf_pois <- function(x,lamda) {
+  return(lamda^x*exp(-lamda)/factorial(x))
+} # 주어진 식을 만족하는 pdf_pois라는 함수 생성
+pdf_pois(7,6) == dpois(7,6) # 식을 통해 만든 함수가 R에 내장되어있는 포아송분포의 pdf값을 구하는 함수와 동일한지 확인
+cat(pdf_pois(7,6), dpois(7,6)) # 각각의 값 확인
+```
+
+5.
+```{r}
+library(tidyverse) # tidyverse 패키지 불러오기
+# (a)
+idx <- grepl("berry$", fruit) # berry로 끝나는 패턴을 idx에 부여
+fruit[idx] # berry로 끝나는 과일 추출
+
+# (b)
+idx <- grepl(".\\s.", fruit) # 두 단어로 구성된 패턴을 idx에 부여
+fruit[idx] # 두 단어로 구성된 과일 추출
+
+# (c)
+idx <- grepl("([a-z]{2})\\1", fruit) # 임의의 두 단어가 정확히 두 번 반복되는 패턴을 idx에 부여
+fruit[idx] # 임의의 두 단어가 정확히 두 번 반복되는 패턴을 가진 과일명 추출
+```
+
+6.
+```{r}
+korean_summary <- function(x) {
+  n <- length(x)
+  for (i in 1:n) {
+    if (is.numeric(x[[i]])) {
+      cat(i, '번째 열', names(x[i]) ,'는 연속형 변수입니다.\n  평균: ',mean(x[[i]]), ', 표준편차: ',sd(x[[i]]),'\n') # x의 i번째 열의 타입이 수치형일 경우 주어진 문장을 출력하는 조건문
+    }
+    else {
+      cat(i, '번째 열', names(x[i]) ,'는 문자형 변수입니다.\n\n') # x의 i번째 열의 타입이 수치형이 아닐 경우 주어진 문장을 출력하는 조건문
+      print(summary(x[[i]])) # 비수치형 타입의 요약통계량 출력
+    }
+  }
+} # 위와 같은 계산을 거치는 함수 생성
+
+korean_summary(iris) # 함수에 iris데이터 입력
+```
+
+7.
+```{r}
+set.seed(20230608) # 시드 설정
+
+# (a)
+
+sample_1 <- sapply(1:100, function(x) rnorm(25, 5, sqrt(3))) # 모평균이 5, 모분산이 3인 정규분포로부터 25개의 표본을 뽑은 표본집합을 100개 생성 후 행렬형태로 반환
+
+# (b)
+(xbar <- apply(sample_1, 2, mean)) # 각 표본의 평균 계산
+(xsd <- apply(sample_1, 2, sd)) # 각 표본의 표준편차 계산
+
+# (c)
+low_ci <- xbar + qnorm(0.025)*sqrt(3)/sqrt(25) # alpha가 0.5일때 신뢰하한 계산
+up_ci <- xbar + qnorm(0.975)*sqrt(3)/sqrt(25) # alpha가 0.5일때 신뢰상한 계산
+
+# (d)
+contain_mu <- low_ci <= 5 & 5 <= up_ci # 평균이 구한 신뢰구간에 포함되어 있는지 논리값의 형태로 반환
+sum(contain_mu)/100 # 얼마나 포함되어 있는지 비율 계산
+```
+
+8.
+```{r}
+getwd() # 작업공간 확인
+
+# (a)
+cogstat <- read.csv('cogstat-dataset.csv') # cogstat-dataset.csv 데이터 불러오기
+
+# (b)
+nrow(cogstat) # cogstat의 데이터 개수 파악
+
+# (c)
+head(cogstat,10) # 상위 10개 데이터 파악
+
+# (d)
+cogstat$ID <- as.character(cogstat$ID) # cogstat의 ID열의 값들을 문자형을 변환
+
+# (e)
+cogstat[,-1] <- data.frame(cogstat[,-1], stringsAsFactors = T) # cogstat의 ID를 제외한 나머지 문자형들을 factor형으로 변환
+
+# (f)
+cogstat$HANDDOM <- as.factor(cogstat$HANDDOM) # HANDDOM이란 수치형 변수를 factor형으로 변환
+
+# (g)
+table(cogstat$SEX) # 남성과 여성의 수 출력
+
+# (h)
+lapply(cogstat[,c(2,7:9)], function(x) { 
+  cbind(count = table(x), proportion = table(x)/nrow(cogstat))
+}
+) # 인지저하상태, 음주여부, 고혈압여부, 주로 사용하는 손의 총 수준별 수와 그 비율을 출력
+
+# (i)
+cogstat$BMI <- cogstat$WEIGHT/(cogstat$HEIGHT/100)^2 # cogstat에 BMI변수를 생성, 이때, 키의 단위가 cm이므로 100으로 나누어 m로 변환 후 BMI 계산
+
+# (j)
+aggregate(MMSE ~ SEX, cogstat, function(x) c(mean = mean(x), sd = sd(x))) # 성별에 따른 MMSE의 평균과 표준편차
+
+# (k)
+aggregate(MMSE ~ cogstat, cogstat, function(x) c(mean = mean(x), sd = sd(x))) # 인지저하상태에 따른 MMSE 점수의 평균과 표준편차
+boxplot(MMSE ~ cogstat, cogstat) # 인지저하상테에 따른 MMSE의 상자그림
+
+# (l)
+aggregate(BMI ~ SEX + cogstat, cogstat, function(x) c(mean = mean(x),sd = sd(x))) # 성별과 인지저하상태에 따른 BMI의 평균과 표준편차 출력
+```
+

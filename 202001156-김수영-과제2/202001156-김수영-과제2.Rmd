@@ -1,0 +1,384 @@
+---
+title: "202001156-김수영-과제2"
+date: "`r format(Sys.Date())`"
+author: "202001156-김수영"
+output: 
+   html_document: 
+      df_print: paged
+---
+
+## Homework #2
+
+1.  **`seq()` 함수를 사용하여** $\log(\exp(10))$ 부터 0 까지 길이가 100인 벡터를 생성 후 객체 `lambda`에 값을 대입하시오.
+
+```{r}
+lambda <- seq(log(exp(10)), 0, length = 100) # log(exp(10))를 첫째항으로, 0를 마지막 항으로 갖는 길이가 100인 수열을 벡터의 형태로 생성 후 객체 lambda에 할당
+print(lambda) # lambda 출력
+```
+
+2.  **두 벡터 `p = c(1, 4, 2, 3, 4, 7, 9, 12)`, `q = c(4, 5, 3, 2)` 의 사칙 연산 결과를 출력하고, 왜 이런 형태로 계산이 이루어졌는지 기술하시오.**
+
+```{r, echo=TRUE}
+p = c(1, 4, 2, 3, 4, 7, 9, 12) ;  q = c(4, 5, 3, 2) # p와 q에 각각 조건에 맞는 원소 할당
+
+p+q # p와 q 간 덧셈
+p-q # p와 q 간 뺄셈
+p*q # p와 q 간 곱셈
+p/q # p와 q 간 나눗셈
+
+
+```
+_기술내용_: p 벡터의 길이는 8, q 벡터의 길이는 4이다. 두 벡터 간 길이가 맞지 않으므로 길이가 다른 벡터 간 사칙연산을 하면 길이가 짧은 벡터의 원소를 재호출하여 연산을 하기 때문에 이러한 형태로 계산이 되는 것이다.
+
+
+3.  **집합 $A = \{1, 3, 5, 7, 8, 9, 12, 15 \}$ 이고 집합 $B = \{3, 6, 9, 12, 15, 18\}$ 일 때, $A\cup B$, $A \cap B$, $A - B$ 의 결과를 출력하시오.**
+
+```{r, echo=TRUE}
+A <- c(1,3,5,7,8,9,12,15) ; B <- c(3,6,9,12,15,18) # A와 B에 각각 조건에 맞는 원소 할당
+
+union(A,B) # A와 B의 합집합을 원소로 하는 벡터 구하기
+intersect(A,B) # A와 B의 교집합을 원소로 하는 벡터 구하기
+setdiff(A,B) # A와 B의 차집합을 원소로 하는 벡터 구하기
+
+```
+
+
+4.  **`year` 라는 객체에 `{2000, 2001, ..., 2020}`, `month` 객체에 `{Jan, Feb, ..., Dec}`, `day` 객체에 `{1, ..., 31}`을 저장하고 `Date` 라는 `list`를 생성 후 생성 결과를 출력 하시오.**
+
+```{r, echo=TRUE}
+year <- c(2000:2020) ; month <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec") ; day <- c(1:31) # year, month, day라는 객체에 조건에 맞는 원소 할당
+Date <- list(year = year, month = month, day = day) # 값을 할당한 객체 year, month, day라는 벡터를 각각 year, month, day라는 이름을 가진 방에 할당한 리스트 Date를 생성
+print(Date) # Date라는 리스트 출력
+```
+
+
+5.  **`x` 벡터에 `{23, 22, 24.5, NA, NA, 28, 27.8, 31, NA, NA}`를 입력하고 결측의 개수를 구하시오.**
+
+```{r, echo=TRUE}
+x <- c(23, 22, 24.5, NA, NA, 28, 27.8, 31, NA, NA) # x라는 객체에 조건에 맞는 원소 할당
+sum(is.na(x)) # 벡터 x의 결측치의 개수 출력
+
+```
+
+
+6.  **`tidyverse` 패키지를 불러온 후 `mpg` 데이터 셋에서 `hwy` 변수을 `x`라는 객체에 저장한 후, `x` 객체에서 24보다 작은 값들의 개수를 구하시오.**
+
+```{r, echo=TRUE}
+library(tidyverse) # tidyverse라는 패키지 불러오기
+
+x <- mpg$hwy # x라는 객체에 mpg라는 데이터 셋 중 hwy라는 변수를 할당
+sum(x<24) # 벡터 x의 원소 중 24보다 작은 값들의 개수 출력
+
+```
+
+7.  **1부터 150 까지 1 단위 수열을 생성 후 객체 `x`에 저장하고 `x`에서 홀수 값만 추출 하시오.**
+
+```{r, echo=TRUE}
+x <- seq(1, 150, 1) # x라는 객체에 첫째항을 1, 마지막항을 150, 공차를 1로하는 수열을 생성 후 할당
+x[x%%2 == 1] # x의 원소 중 2로나눈 나머지가 1 즉, 홀수인 원소들을 출력
+
+```
+
+
+8.  **두 벡터 `{1, 2, 3, 0, -1, -2, -1, 0, 7}`와 `{6, -3, 0, 0, 4, -5, 0, 0, 2}` 를 각각 `x`와 `y` 객체에 저장하고, 해당 객체를 이용해 다음 행렬을 생성하시오**
+
+$$\mathrm{\mathbf{X}} = 
+\begin{bmatrix}
+1   &  2 & 3 \\
+0   & -1 & -2 \\
+-1  &  0 &  7
+\end{bmatrix}, ~~~~
+\mathrm{\mathbf{Y}} = 
+\begin{bmatrix}
+6  & 0 & 0 \\
+-3 & 4 & 0 \\
+0  &-5 & 2
+\end{bmatrix}
+$$
+
+```{r, echo=TRUE}
+x <- c(1,2,3,0,-1,-2,-1,0,7) ; y <- c(6,-3,0,0,4,-5,0,0,2) # 과제에 주어진 조건대로 x와 y라는 객체에 벡터 할당
+
+x <- matrix(x, 3, byrow = T) ; y <- matrix(y, 3) # 벡터 x를 3개의 행, 3개의 열, 행부터 벡터x의 값들을 차례대로 할당하는 방식으로 행렬x를 생성, 벡터 y를 3개의 행, 3개의 열, 열부터 벡터y의 값들을 차례대로 할당하는 방식으로 행렬y를 생성
+
+```
+
+
+9.  **위 두 행렬의 연산을 손으로 계산한 결과(그림 첨부)와 R에서 연산한 결과를 제시하시오.**
+
+    -   $\mathrm{\mathbf{X}}\mathrm{\mathbf{X}}^T$
+
+    -   $\mathrm{\mathbf{X}}\mathrm{\mathbf{Y}}$
+
+    -   $\mathrm{\mathbf{Y}}\mathrm{\mathbf{X}}$
+
+    -   $\det(\mathrm{\mathbf{X}})$
+
+    -   $\mathrm{\mathbf{Y}}^{-1}$
+
+
+```{r, echo=TRUE}
+x%*%t(x) # 행렬x와 행렬x를 전치시킨 행렬x^t를 수학에서 정의하는 행렬 간 곱셈으로 계산
+x%*%y # 행렬x와 행렬x를 행렬y를 수학에서 정의하는 행렬 간 곱셈으로 계산
+y%*%x # 행렬y와 행렬x를 행렬x를 수학에서 정의하는 행렬 간 곱셈으로 계산
+det(x) # 행렬x의 행렬식 계산
+solve(y) # 헹렬y의 역행렬 계산
+
+```
+
+![](KakaoTalk_20230417_224103844.jpg)
+![](KakaoTalk_20230427_105602197.jpg)
+10. **역행렬을 이용해 다음의 연립 4차원 일차 연립 방정식의 해를 구하시오. **
+
+
+$$
+ \begin{cases}
+    3a - 4b + 3c - 2d  & = 8 \\
+     a -  b +  c -  d  & =  4 \\  
+     2a - 4b + 2c - 3d & = 1 \\
+     2a - b + c - 3d   &  = 5
+ \end{cases}
+$$
+
+
+```{r, echo=TRUE}
+A <- matrix(c(3,-4,3,-2,1,-1,1,-1,2,-4,2,-3,2,-1,1,-3),4, byrow = T) ; b <- matrix(c(8,4,1,5), nrow = 4) # 주어진 4차원 일차 연립방정식을 계수행렬 A, 상수행렬 b로 표현
+
+solve(A,b) # 주어진 연립방적식의 해를 A의 역행렬과 b간 행렬 간 곱셈을 구해주는 함수 solve를 이용하여 해를 도출
+
+```
+
+
+
+11. **`runif()` 함수를 이용해 난수 200개를 생성하여 `x`라는 객체에 저장 하시오.**
+
+-   **생성한 `x` 를 이용해 `x`가 0.5 보다 작으면 0, 0.5 보다 크거나 작으면 1 값을 재할당 하시오.**
+
+-   **수준이 0, 1이고 수준이름이 각각 "Male", "Female"인 요인형 객체 sex를 생성하시오.**
+
+```{r, echo=TRUE}
+x <- runif(200) # runif 함수를 이용해서 U(0,1)에서 난수 200개를 생성하여 이를 x라는 객체에 할당
+x[x<0.5] <- 0 ; x[x>=0.5] <- 1 # x의 원소 중 0.5보다 작은 원소는 0으로, 0.5보다 크거나 같은 원소는 1로 벡터x를 업데이트
+print(x) # 업데이트가 잘 되었는지 확인
+
+sex <- factor(levels = c(0, 1), labels = c("Male", "Female")) # sex라는 객체에 수준은 0,1 , 수준에 따른 이름은 Male, Female로 지정한 요인 생성
+print(sex) # factor형 자료가 잘 생성되었는지 확인
+```
+
+
+12. **R에 내장된 `mtcars` 데이터셋은 다음과 같이 11개의 변수로 구성되어 있다.**[첨부한 html 파일 참조]
+
+
+a)  **`mtcars`의 데이터 구조를 파악하고 자료의 전반적인 형태에 대해 기술 하시오.**
+
+```{r, echo=TRUE}
+class(mtcars) # mtcars의 class를 확인
+head(mtcars) # mtcars의 상위 6개의 데이터들을 확인
+str(mtcars) # mtcars의 구조를 확인
+attributes(mtcars) # mtcars의 속성을 확인
+summary(mtcars) # mtcarsd의 변수별 요약통계량 확인
+
+```
+
+_기술내용_: 해당 데이터는 데이터프레임 형태의 데이터이다. 32개의 관측값과 11개의 변수로 이루어져있는데 각 변수명은 코드북에 나와있는 것과 같고 32종의 차량의 다양한 차량정보들을 모아놓은 데이터이다. 모든 변수들은 수치형데이터이나 vs(엔진형태)와 am(변속기어)의 경우는 0과 1로만 구성되어 있어 관측된 데이터의 특정 수치를 나타낸다기 보단 특정 속성을 부여해주는 변수들이라 보는 것이 타당하다 생각한다. gear(전진기어 갯수), carb(기화기 갯수), cyl(엔진 기통수)는 이산형 수치데이터이기에 범주화 가능한 변수로도 볼 수 있다.
+
+
+b)  **위 코드북을 참고해 엔진과 변속기어에 해당하는 변수를 factor로 변환 후 해당 데이터 프레임을 `df` 객체에 저장 하시오.**
+
+```{r, echo=TRUE}
+mtcars$vs <- as.factor(mtcars$vs) ; mtcars$am <- as.factor(mtcars$am) # mtcars의 엔진과 변속기어에 해당하는 변수를 factor형으로 변환 후 mtcars의 데이터들을 업데이트
+df <- mtcars # mtcars를 df라는 객체에 저장
+print(df) # df 출력
+```
+
+
+c)  **`df` 데이터셋에서 변속기어 (`am`)에 따른 `mpg`, `disp`, `hp`, `drat`, `wt`, `qsec`에 대한 평균과 표준편차를 구하시오.**
+
+```{r, echo=TRUE}
+
+
+aggregate(df[,c("mpg", "disp", "hp", "drat", "wt", "qsec")], by = df["am"], mean) # `am`에 따른 `mpg`, `disp`, `hp`, `drat`, `wt`, `qsec`에 대한 평균
+aggregate(df[,c("mpg", "disp", "hp", "drat", "wt", "qsec")], by = df["am"], sd) # `am`에 따른 `mpg`, `disp`, `hp`, `drat`, `wt`, `qsec`에 대한 표준편차
+
+
+```
+
+d)  **`df` 데이터셋을 엔진형태(`vs`) 별로 나눈 후, 연비를 종속변수($y$)로 놓고 무게(`wt`)를 독립변수로 사용한 일변량 회귀식을 반환 하시오.**
+
+
+```{r, echo=TRUE}
+df <- split(x = df,f = df$vs) # df를 엔진형태로 나눔
+
+sapply(df, FUN = function(x) {coef(lm(mpg ~ wt, data = x))}) # 연비를 종속변수, 무게를 독립변수로 하는 일변량 회귀식을 엔진형태별로 구함
+
+```
+
+
+<br><br>
+
+13. **1912년 4월 14일 타이타닉호 침몰 사고의 생존자 정보를 담고 있는 `titanic` 데이터셋은 통계학적으로 범주형 데이터 분석의 예시로서 널리 사용되고 있으며, 기계학습 및 데이터 과학 커뮤니티인 [Kaggle](https://kaggle.com)에서도 기계학습 알고리즘 경연을 위한 힉습자료로 활용되고 있다. 해당 데이터는 <http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/titanic3.csv> 에서 다운로드가 가능하다. 타이타닉 데이터의 주요 변수에 대한 설명(코드북)은 아래와 같다.**[첨부한 html 파일 테이블 참고]
+
+```{r, echo=TRUE}
+
+
+```
+
+a)  **위 코드북의 내용을 `codebook_tit` 이란 데이터 프레임 객체에 저장 후 출력하시오.**
+
+
+```{r, echo=TRUE}
+codebook_tit <- data.frame("변수명" = c("pclass",  "survived", "name",
+                           "sex", "age" , "sibsp", "parch",
+                           "ticket", "fare", "cabin", "embarked"), 
+                           "변수설명(영문)" = c("Passenger Class (1=1st; 2=2nd; 3=3rd)",	"Survival (0=No; 1=Yes)", "Passenger name",	"Sex", "Age",	"# of siblings/spouses abroad",	"# of parents/children abroad", "Ticket number",	"Passenger fare",	"Cabin", "Port of embarkation (C=Cherbourg; Q=Queenstown; S=Southhampton)"),
+"변수설명(국문)" = c("선실 등급", '생존여부', '탑승객 성명', "성별", "나이", "동승한 형제/배우자 수", "동승한 부모/자녀 수", "티켓번호", "티켓요금", "선실번호", "탑승장소")) # 코드북의 내용을 codebook_tit라는 객채에 dataframe 형태로 저장
+
+print(codebook_tit) # codebook_tit 출력
+
+```
+
+
+b)  **위 URL 주소로부터 타이타닉 데이터 파일을 읽은 후 `titanic` 객체에 저장한 뒤 위 코드북에서 제시한 변수만 추출한 다음 `df_titanic`이란 객체에 저장한 결과에 대해 개괄적 형태 및 데이터 특성에 대해 기술하시오.**
+
+
+```{r, echo=TRUE}
+titanic <- read.csv("https://raw.githubusercontent.com/zorba78/cnu-r-programming-lecture-note/master/dataset/titanic3.csv") # URL주소로부터 불러읽은 파일을 titanic이란 객체에 저장
+
+df_titanic <- titanic[codebook_tit$변수명] # titanic 중 codebook_tit에서 제시된 변수만을 추출하여 df_titanic이란 객체에 저장
+
+head(df_titanic) # df_titanic의 상위 6개의 데이터 출력
+
+```
+_기술내용_: df_titanic이라는 객체는 선실 등급, 생존여부, 탑승객 성명, 성별, 나이, 동승한 형제/배우자 수, 동승한 부모/자녀 수, 티켓번호, 티켓요금, 선실번호, 탑승 장소라는 변수들을 가지고 있는 데이터이다. 선실 등급, 생존여부, 동승한 형제/배우자 수, 동승한 부모/자녀 수, 선실번호는 이산형 데이터이기에 데이터 자체로 범주화가 가능하며, 성별, 탑승장소 역시 그 자체로 범주화가 가능한 변수들이다. 탑승객 성명, 티켓번호의 경우에는 범주화가 힘들고 데이터의 고유한 인덱스를 나타내주는 변수로 취급함이 타당하다고 생각하며, 나이, 티켓요금의 경우에는 이산수치형 데이터이긴 하나 데이터들의 범위가 넓기에 적절한 통계량을 이용해 구간을 나눠 범주화를 시킬 수 있을 것이라 본다.
+
+c)  **`age` 변수에 포함된 결측값을 `age`의 전체 평균값으로 대체 하시오.**
+
+
+```{r, echo=TRUE}
+
+df_titanic[,5] <- ifelse(is.na(df_titanic$age), mean(df_titanic[,"age"], na.rm = T), df_titanic$age) # df_titanic 중 age라는 변수의 결측값을 평균으로 대체
+print(df_titanic[,5]) # df_titanic의 age 변수의 결측값이 대체되었는지 출력하여 확인
+
+```
+
+d)  **`df_titanic`에서 `age` 를 다음과 같이 그룹화 후 `age_group` 변수(factor)를 생성 하시오.**
+
+
+```{r, eval=FALSE}
+# 0 살 이상 15살 미만: Children
+# 15살 이상: Adult
+age_group <- factor(ifelse(0<=df_titanic[,5]&df_titanic[,5]<15, "Children", "Adult")) # 0살에서 15세 미만일 경우 Children, 그 이상일 경우 Adult란 구분 요인을 부여한 facrtor형 자료 생성
+
+```
+
+<!-- -->
+
+<br><br>
+
+14. **아래와 같은 데이터셋이 주어졌을 때**[첨부한 html의 테이블 참고]
+
+-   Dataset #1
+
+-   Dataset #2
+
+
+a)  **Dataset #1에 해당하는 데이터를 `authors`, dataset #2에 해당하는 데이터를 `books` 에 저장한 객체를 생성 하시오(단, 데이터 프레임을 구성하는 모든 변수는 문자열 변수로 저장).**
+
+
+```{r, echo=TRUE}
+
+authors <- data.frame(surname = c("Tukey", "Venables", "Tierney", "Ripley", "McNeil"),
+                      nationality = c("US", "Australia", "US", "UK", "Australia")) # authors란 조건에 맞는 dataframe을 생성
+
+books <- data.frame(name = c("Tukey", "Venables", "Tierney", "Ripley", "Ripley", "McNeil", "R Core"),
+                    title = c("Exploratory Data Analysis", "Modern Applied Statistics ...", "LISP-STAT", "Spatial Statistics",
+                              "Stochastic Simulation", "Interactive Data Analysis", "An Introduction to R")) # books란 조건에 맞는 dataframe을 생성
+
+```
+
+
+<br/>
+
+b)  **두 데이터 셋을 `authors` 기준으로 병합한 데이터셋을 생성하시오.**
+
+
+```{r, echo=TRUE}
+
+merge(authors, books, by.x = "surname", by.y = "name") # authors의 surname이란 변수와 books의 name이란 변수로 하는 두 데이터셋의 병합을 authors를 기준으로 병합
+
+
+```
+
+
+<br/>
+
+c)  **두 데이터 셋의 모든 값들을 포함한 결함 데이터 셋을 생성 하시오.**
+
+
+
+```{r, echo=TRUE}
+merge(authors, books, by.x = "surname", by.y = "name", all = T) # 결측값을 포함한 병합 데이테셋을 생성
+
+```
+
+
+
+15. **2.5절 배열에서 다룬 확장 예제 "RGB값을 무작위로 샘플링 후 매개변수로 노이즈 가중치 조절해 보기" 명령 스크립트 중 다음아래에 해당하는 구문의 반복 명령을 최소화한 스크립트 작성 후 해당 스크립트가 정상적으로 작동하는지 그림 출력을 통해 확인하시오. 단, 그림은 2.5절 예제와 동일한 그림을 사용. 만약 그림 파일을 제대로 불러올 수 없는 경우, 첨부한 jpg 파일을 직접 읽어오세요**
+
+ - **Hint: `*apply()` 계열 함수, 코드블록(`{}`), `return()`, `unlist()`, `array()` 함수를 조합해 보세요).**
+
+```{r eval=FALSE}
+library(tidyverse)
+library(jpeg)
+library(cowplot)
+
+# myurl <- paste0("https://img.livescore.co.kr/data/editor/1906/", 
+#                 "ba517de8162d92f4ea0e9de0ec98ba02.jpg")
+# z <- tempfile()
+# download.file(myurl,z,mode="wb")
+
+# 그림을 정상적으로 다운로드 할 수 있는 경우
+# pic <- readJPEG(z)
+
+# 그림을 정상적으로 다운로드 할 수 없는 경우 직접 그림 파일 불러옴
+#pic <- readJPEG("<경로명>/stranger-thing.jpg")
+pic <- readJPEG("stranger-thing.jpg")
+dim_pic <- dim(pic)
+t <- 0.2; nl <- length(300:460); pl <- length(440:520)
+
+# 아래 script를 줄여 볼 것!!!
+yr <- pic[300:460, 440:520, 1]
+yg <- pic[300:460, 440:520, 2]
+yb <- pic[300:460, 440:520, 3]
+
+wr <- t * yr + (1 - t)*matrix(runif(length(yr)), nrow = nl, ncol = pl)
+wg <- t * yg + (1 - t)*matrix(runif(length(yg)), nrow = nl, ncol = pl)
+wb <- t * yb + (1 - t)*matrix(runif(length(yb)), nrow = nl, ncol = pl)
+
+
+pic[300:460, 440:520, 1] <- wr
+pic[300:460, 440:520, 2] <- wg
+pic[300:460, 440:520, 3] <- wb
+
+```
+
+
+```{r, echo=TRUE}
+
+library(tidyverse) ; library(jpeg) ; library(cowplot) ; library(magick) # 필요한 패키지 불러오기
+
+myurl <- "https://img.livescore.co.kr/data/editor/1906/ba517de8162d92f4ea0e9de0ec98ba02.jpg" # URL주소를 값으로 갖는 myurl이라는 객체 생성
+z <- tempfile() # 임시 저장 공간을 만드는 객체 생성
+download.file(myurl, z, mode = "wb") # URL로부터 사진을 다운로드하여 임시 저장 공간에 저장
+pic <- readJPEG(z) # pic이라는 객체에 사진의 RGB 정보를 저장
+dim_pic <- dim(pic) # pic의 차원의 수를 dim_pic라는 객체의 저장
+t <- 0.2; nl <- length(300:460); pl <- length(440:520) # 각 조건에 맞는 숫자를 t, nl, pl에 할당
+
+pic[300:460, 440:520,] <- array(unlist(lapply(pic[300:460, 440:520, 1:3], function(x) {t * x + (1 - t) * runif(1) })), dim = c(nl,pl,3)) # pic의 특정 구간을 노이즈를 낀 사진으로 변환, 자세히 설명하자면 lapply 함수를 통해 pic의 특정 구간에 노이즈를 각 RGB 층마다 부여하고 이렇게 생성된 list를 vector형식으로 바꾼 뒤 다시 array 형태 데이터 셋으로 변환하여 pic의 구간을 업데이트
+
+ggdraw() + 
+  draw_image(pic) # 노이즈가 잘 적용되었는지 업데이트된 사진을 출력
+
+```
+
+
